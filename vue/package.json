@@ -1,6 +1,6 @@
 {
-  "name": "front-end",
-  "version": "0.1.0",
+  "name": "PStorage",
+  "version": "0.0.4",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",

@@ -6,8 +6,12 @@ const isDev = require('electron-is-dev');
 const logger = require('./logger');
 const axios = require('axios');
 
-const { app, BrowserWindow, dialog, Menu, Tray } = electron;
+const { app, BrowserWindow, dialog, Menu, Tray, clipboard } = electron;
 const JAR = 'spring-1.0.0.jar'; // how to avoid manual update of this?
+const APPLICATION_NAME = 'PStorage';
+const APPLICATION_VERSION = '0.0.4';
+const APPLICATION_MENU_ITEM_NAME =  `${APPLICATION_NAME} v${APPLICATION_VERSION}`;
+const APPLICATION_TOOLTIP = `${APPLICATION_NAME}`;
 const MAX_CHECK_COUNT = 10;
 const PREFERRED_PORT = 8080;
 
@@ -99,6 +103,11 @@ function createWindow(callback) {
     if (callback) callback()
   });
 
+  mainWindow.on('close', function (event) {
+    event.preventDefault();
+    mainWindow.hide();
+  });
+
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
@@ -109,15 +118,42 @@ function createWindow(callback) {
 }
 
 function createTrayMenu() {
-  tray = new Tray('/path/to/my/icon')
+  tray = new Tray('./resources/icon16.png');
+
+  if (process.platform === 'win32') {
+    tray.on('click', () => mainWindow.show());
+  }
+
   const contextMenu = Menu.buildFromTemplate([
-    { label: 'Item1', type: 'radio' },
-    { label: 'Item2', type: 'radio' },
-    { label: 'Item3', type: 'radio', checked: true },
-    { label: 'Item4', type: 'radio' }
-  ])
-  tray.setToolTip('Это мое приложение.')
-  tray.setContextMenu(contextMenu)
+    {
+      label: `${APPLICATION_MENU_ITEM_NAME}`, click: function () {
+        mainWindow.show();
+      }
+    },
+    {
+      type: 'separator'
+    },
+    {
+      label: 'Passwords',
+      submenu: [
+        { label: 'Sample password', role: 'copy', click: async () => {
+            clipboard.writeText('samplePasswordValue', 'selection');
+          }
+        }
+      ]
+    },
+    {
+      type: 'separator'
+    },
+    {
+      label: 'Quit', click: function () {
+        mainWindow.destroy();
+        app.quit();
+      }
+    }
+  ]);
+  tray.setToolTip(APPLICATION_TOOLTIP);
+  tray.setContextMenu(contextMenu);
 }
 
 function loadHomePage() {

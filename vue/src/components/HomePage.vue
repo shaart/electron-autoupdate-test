@@ -7,6 +7,7 @@
     </ul>
     <h1>Set badge count</h1>
     <p>Click buttons below to set app badge count (calling Electron via preload script)</p>
+    <p>Count: {{ count }}</p>
     <button @click="increase">
       Increase
     </button>

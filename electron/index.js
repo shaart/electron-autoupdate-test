@@ -1,12 +1,12 @@
 const electron = require('electron');
 const path = require('path');
-const url = require('url');
 var findPort = require("find-free-port");
 const isDev = require('electron-is-dev');
 const logger = require('./logger');
+const splash = require('./splash');
 const axios = require('axios');
 
-const { app, BrowserWindow, dialog, Menu, Tray, clipboard } = electron;
+const { app, BrowserWindow, dialog, Menu, Tray, clipboard, ipcMain } = electron;
 const JAR = 'spring-1.0.0.jar'; // how to avoid manual update of this?
 const APPLICATION_NAME = 'PStorage';
 const APPLICATION_VERSION = '0.0.4';
@@ -70,16 +70,6 @@ function stopServer() {
       baseUrl = null;
       app.quit(); // quit again
     })
-}
-
-function createSplash() {
-  const splash = new BrowserWindow({ width: 400, height: 300, frame: false });
-  splash.loadURL(url.format({
-    pathname: path.join(__dirname, 'splash.html'),
-    protocol: 'file:',
-    slashes: true
-  }));
-  return splash
 }
 
 function createWindow(callback) {
@@ -171,23 +161,32 @@ function loadHomePage() {
           } else {
             dialog.showErrorBox('Server timeout',
               `UI does not receive server response for ${MAX_CHECK_COUNT} seconds.`);
+            mainWindow.destroy();
             app.quit()
           }
         } else {
           logger.error(e);
           dialog.showErrorBox('Server error', 'UI receives an error from server.');
+          mainWindow.destroy();
           app.quit()
         }
       });
   }, 200);
 }
 
+process.on('uncaughtException', function (error) {
+  logger.error(error);
+  dialog.showErrorBox(`${APPLICATION_NAME}: an unknown error occurred`,
+      `${error.stack}`);
+  app.quit();
+});
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', function () {
   logger.info('###################################################');
-  logger.info('#               Application Starting              #');
+  logger.info('#               Application Starting AAA          #');
   logger.info('###################################################');
 
   if (isDev) {
@@ -196,12 +195,12 @@ app.on('ready', function () {
     createWindow();
   } else {
     // Create window first to show splash before starting server
-    const splash = createSplash();
+    const splashWindow = splash.createSplash();
 
     // Start server at an available port (prefer 8080)
     findPort(PREFERRED_PORT, function(err, port) {
       startServer(port);
-      createWindow(() => splash.close());
+      createWindow(() => splashWindow.close());
     });
   }
 });
@@ -229,5 +228,7 @@ app.on('will-quit', e => {
     e.preventDefault(); // will quite later after stopped the server
   }
 });
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+
+ipcMain.on('app_version', (event) => {
+  event.sender.send('app_version', { version: app.getVersion() });
+});

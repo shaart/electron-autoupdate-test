@@ -5,11 +5,12 @@ const isDev = require('electron-is-dev');
 const logger = require('./logger');
 const splash = require('./splash');
 const axios = require('axios');
+const packageJson = require('../package.json');
 
 const { app, BrowserWindow, dialog, Menu, Tray, clipboard, ipcMain } = electron;
 const JAR = 'spring-1.0.0.jar'; // how to avoid manual update of this?
-const APPLICATION_NAME = 'PStorage';
-const APPLICATION_VERSION = '0.0.4';
+const APPLICATION_NAME = packageJson.name;
+const APPLICATION_VERSION = packageJson.version;
 const APPLICATION_MENU_ITEM_NAME =  `${APPLICATION_NAME} v${APPLICATION_VERSION}`;
 const APPLICATION_TOOLTIP = `${APPLICATION_NAME}`;
 const MAX_CHECK_COUNT = 10;
@@ -90,7 +91,9 @@ function createWindow(callback) {
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
-    if (callback) callback()
+    if (callback) {
+      callback()
+    }
   });
 
   mainWindow.on('close', function (event) {

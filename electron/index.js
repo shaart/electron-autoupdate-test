@@ -6,8 +6,9 @@ const logger = require('./logger');
 const splash = require('./splash');
 const axios = require('axios');
 const packageJson = require('../package.json');
+const {autoUpdater} = require("electron-updater");
 
-const { app, BrowserWindow, dialog, Menu, Tray, clipboard, ipcMain, autoUpdater } = electron;
+const { app, BrowserWindow, dialog, Menu, Tray, clipboard, ipcMain } = electron;
 const JAR = 'spring-1.0.0.jar'; // how to avoid manual update of this?
 const APPLICATION_NAME = packageJson.name;
 const APPLICATION_VERSION = packageJson.version;

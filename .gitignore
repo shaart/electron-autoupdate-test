@@ -3,6 +3,7 @@ node_modules/
 dist/
 npm-debug.log
 yarn-error.log
+electron-builder.yml
 
 # Editor directories and files
 .vscode

@@ -1,5 +1,8 @@
 <template>
   <div>
+    <h1>PStorage Auto Update Test</h1>
+    <p id="version"/>
+    <hr/>
     <h1>Items from Server</h1>
     <p v-if="error">Failed to receive items. {{ error }}</p>
     <ul v-else>
@@ -32,6 +35,10 @@ export default {
     }
   },
   created() {
+    this.$interop.init(versionText => {
+      const version = document.getElementById('version');
+      version.innerText = versionText;
+    });
     this.$http.get('/api/items')
       .then(response => {
         this.items = response.data;

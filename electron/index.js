@@ -189,7 +189,7 @@ process.on('uncaughtException', function (error) {
 // Some APIs can only be used after this event occurs.
 app.on('ready', function () {
   logger.info('###################################################');
-  logger.info('#               Application Starting AAA          #');
+  logger.info('#               Application Starting              #');
   logger.info('###################################################');
 
   if (isDev) {
@@ -233,5 +233,8 @@ app.on('will-quit', e => {
 });
 
 ipcMain.on('app_version', (event) => {
-  event.sender.send('app_version', { version: app.getVersion() });
+  const appVersion = isDev ? APPLICATION_VERSION : app.getVersion();
+  event.sender.send('app_version', {
+    version: appVersion
+  });
 });

@@ -241,9 +241,13 @@ ipcMain.on('app_version', (event) => {
   });
 });
 
-autoUpdater.on('update-available', () => {
-  mainWindow.webContents.send('update_available');
-});
-autoUpdater.on('update-downloaded', () => {
-  mainWindow.webContents.send('update_downloaded');
-});
+if (!isDev) {
+  autoUpdater.on('update-available', () => {
+    logger.info('Got "update-available" event. Sending to main window...');
+    mainWindow.webContents.send('update_available');
+  });
+  autoUpdater.on('update-downloaded', () => {
+    logger.info('Got "update-downloaded" event. Sending to main window...');
+    mainWindow.webContents.send('update_downloaded');
+  });
+}

@@ -53,8 +53,17 @@ export default {
     };
     const message = document.getElementById('message');
     const notification = document.getElementById('notification');
+    const onUpdateAvailable = () => {
+      message.innerText = 'A new update is available. Downloading now...';
+      notification.classList.remove('hidden');
+    };
     const restartButton = document.getElementById('restart-button');
-    this.$interop.init(setVersion, message, notification, restartButton);
+    const onUpdateDownloaded = () => {
+      restartButton.classList.remove('hidden');
+      message.innerText = 'Update Downloaded. It will be installed on restart. Restart now?';
+      notification.classList.remove('hidden');
+    };
+    this.$interop.init(setVersion, onUpdateAvailable, onUpdateDownloaded);
 
     this.$http.get('/api/items')
       .then(response => {
@@ -67,7 +76,8 @@ export default {
   },
   methods: {
     closeNotification() {
-      this.$interop.notification.classList.add('hidden');
+      const notification = document.getElementById('notification');
+      notification.classList.add('hidden');
     },
     restartApp() {
       this.$interop.ipcRenderer.send('restart_app');

@@ -7,7 +7,8 @@ const LOG_PREFIX = '[ui]';
 window.versions = process.versions;
 
 window.interop = {
-  init(setVersion, message, notification, restartButton) {
+  ipcRenderer: ipcRenderer,
+  init(setVersion, onUpdateAvailable, onUpdateDownloaded) {
     ipcRenderer.send('app_version');
     ipcRenderer.on('app_version', (event, arg) => {
       ipcRenderer.removeAllListeners('app_version');
@@ -16,17 +17,14 @@ window.interop = {
 
     ipcRenderer.on('update_available', () => {
       ipcRenderer.removeAllListeners('update_available');
-      message.innerText = 'A new update is available. Downloading now...';
       logger.info('A new update is available. Downloading now...');
-      notification.classList.remove('hidden');
+      onUpdateAvailable();
     });
 
     ipcRenderer.on('update_downloaded', () => {
       ipcRenderer.removeAllListeners('update_downloaded');
       logger.info('Update Downloaded. It will be installed on restart');
-      restartButton.classList.remove('hidden');
-      message.innerText = 'Update Downloaded. It will be installed on restart. Restart now?';
-      notification.classList.remove('hidden');
+      onUpdateDownloaded();
     });
   },
   log: {

@@ -6,6 +6,29 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title>front-end</title>
+    <style>
+      #auto-update-body {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 20px;
+        font-family: sans-serif;
+        background-color: #eaeaea;
+        text-align: center;
+      }
+      #notification {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        width: 200px;
+        padding: 20px;
+        border-radius: 5px;
+        background-color: white;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
   </head>
   <body>
     <noscript>

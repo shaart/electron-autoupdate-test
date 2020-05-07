@@ -7,7 +7,7 @@ const splash = require('./splash');
 const axios = require('axios');
 const packageJson = require('../package.json');
 
-const { app, BrowserWindow, dialog, Menu, Tray, clipboard, ipcMain } = electron;
+const { app, BrowserWindow, dialog, Menu, Tray, clipboard, ipcMain, autoUpdater } = electron;
 const JAR = 'spring-1.0.0.jar'; // how to avoid manual update of this?
 const APPLICATION_NAME = packageJson.name;
 const APPLICATION_VERSION = packageJson.version;
@@ -90,6 +90,7 @@ function createWindow(callback) {
   // mainWindow.webContents.openDevTools()
 
   mainWindow.once('ready-to-show', () => {
+    autoUpdater.checkForUpdatesAndNotify();
     mainWindow.show();
     if (callback) {
       callback()
@@ -237,4 +238,11 @@ ipcMain.on('app_version', (event) => {
   event.sender.send('app_version', {
     version: appVersion
   });
+});
+
+autoUpdater.on('update-available', () => {
+  mainWindow.webContents.send('update_available');
+});
+autoUpdater.on('update-downloaded', () => {
+  mainWindow.webContents.send('update_downloaded');
 });

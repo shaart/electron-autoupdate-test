@@ -2,17 +2,19 @@
   "name": "electron-vue-spring",
   "version": "0.0.4",
   "description": "A minimal starter project for using Electron, Vue and Spring.",
-  "author": "Wu, Ruoyun",
+  "author": "Arthur Shalaev",
   "repository": {
     "type": "git",
-    "url": "https://github.com/wuruoyun/electron-vue-spring.git"
+    "url": "https://github.com/shaart/electron-autoupdate-test.git"
   },
   "main": "electron/index.js",
   "scripts": {
     "start": "electron ./electron",
     "build-server": "node build/build-server.js",
     "build-installer": "node build/build-installer.js",
+    "build-installer-deploy": "node build/build-installer.js deploy",
     "build": "npm-run-all clean build-server build-installer",
+    "deploy": "npm-run-all clean build-server build-installer-deploy",
     "clean": "rimraf dist"
   },
   "license": "MIT",

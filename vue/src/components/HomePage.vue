@@ -1,7 +1,19 @@
 <template>
   <div>
-    <h1>PStorage Auto Update Test</h1>
-    <p id="version"/>
+    <div id="auto-update-body">
+      <h1>PStorage Auto Update Test</h1>
+      <p id="version"/>
+      <hr/>
+      <div id="notification" class="hidden">
+        <p id="message"/>
+        <button id="close-button" onClick="closeNotification()">
+          Close
+        </button>
+        <button id="restart-button" onClick="restartApp()" class="hidden">
+          Restart
+        </button>
+      </div>
+    </div>
     <hr/>
     <h1>Items from Server</h1>
     <p v-if="error">Failed to receive items. {{ error }}</p>
@@ -35,20 +47,31 @@ export default {
     }
   },
   created() {
-    this.$interop.init(versionText => {
+    const setVersion = versionText => {
       const version = document.getElementById('version');
       version.innerText = versionText;
-    });
+    };
+    const message = document.getElementById('message');
+    const notification = document.getElementById('notification');
+    const restartButton = document.getElementById('restart-button');
+    this.$interop.init(setVersion, message, notification, restartButton);
+
     this.$http.get('/api/items')
       .then(response => {
         this.items = response.data;
         this.$log.info('Received items from server.')
       })
       .catch(error => {
-        this.error = error 
+        this.error = error
       })
   },
   methods: {
+    closeNotification() {
+      this.$interop.notification.classList.add('hidden');
+    },
+    restartApp() {
+      this.$interop.ipcRenderer.send('restart_app');
+    },
     increase() {
       this.count++;
       this.$interop.setBadgeCount(this.count);
@@ -56,7 +79,7 @@ export default {
     decrease() {
       if (this.count > 0) {
         this.count--;
-        this.$interop.setBadgeCount(this.count);      
+        this.$interop.setBadgeCount(this.count);
       }
     },
     open() {

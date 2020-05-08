@@ -1,6 +1,6 @@
 {
   "name": "electron-vue-spring",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "A minimal starter project for using Electron, Vue and Spring.",
   "author": "Arthur Shalaev",
   "repository": {

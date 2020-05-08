@@ -243,7 +243,8 @@ ipcMain.on('app_version', (event) => {
 
 ipcMain.on('restart_app', () => {
   logger.info('Got "restart_app" event in main process.');
-  autoUpdater.quitAndInstall();
+  autoUpdater.quitAndInstall(true, true);
+  app.exit();
 });
 
 if (!isDev) {

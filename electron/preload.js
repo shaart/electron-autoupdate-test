@@ -7,7 +7,6 @@ const LOG_PREFIX = '[ui]';
 window.versions = process.versions;
 
 window.interop = {
-  ipcRenderer: ipcRenderer,
   init(setVersion, onUpdateAvailable, onUpdateDownloaded) {
     ipcRenderer.send('app_version');
     ipcRenderer.on('app_version', (event, arg) => {
@@ -26,6 +25,10 @@ window.interop = {
       logger.info('Update Downloaded. It will be installed on restart');
       onUpdateDownloaded();
     });
+  },
+  restart() {
+    logger.info('Got "restart" command');
+    ipcRenderer.send('restart_app');
   },
   log: {
     info (msg) {

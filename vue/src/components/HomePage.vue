@@ -47,6 +47,16 @@ export default {
     }
   },
   created() {
+    this.$http.get('/api/items')
+      .then(response => {
+        this.items = response.data;
+        this.$log.info('Received items from server.')
+      })
+      .catch(error => {
+        this.error = error
+      })
+  },
+  mounted() {
     const setVersion = versionText => {
       const version = document.getElementById('version');
       version.innerText = versionText;
@@ -58,21 +68,13 @@ export default {
       notification.classList.remove('hidden');
     };
     const restartButton = document.getElementById('restart-button');
+    console.log(message, notification, restartButton);
     const onUpdateDownloaded = () => {
       restartButton.classList.remove('hidden');
       message.innerText = 'Update Downloaded. It will be installed on restart. Restart now?';
       notification.classList.remove('hidden');
     };
     this.$interop.init(setVersion, onUpdateAvailable, onUpdateDownloaded);
-
-    this.$http.get('/api/items')
-      .then(response => {
-        this.items = response.data;
-        this.$log.info('Received items from server.')
-      })
-      .catch(error => {
-        this.error = error
-      })
   },
   methods: {
     closeNotification() {

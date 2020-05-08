@@ -82,7 +82,7 @@ export default {
       notification.classList.add('hidden');
     },
     restartApp() {
-      this.$interop.ipcRenderer.send('restart_app');
+      this.$interop.restart();
     },
     increase() {
       this.count++;
